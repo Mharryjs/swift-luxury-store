@@ -1,392 +1,154 @@
-import React, { useState } from 'react';
-import { 
-  Instagram, 
-  Facebook, 
-  Youtube, 
-  Twitter, 
-  Linkedin, 
-  Mail, 
-  ArrowUpRight, 
-  CheckCircle2, 
-  Lock
-} from 'lucide-react';
-import { useStore } from '../context/StoreContext.tsx';
+"use client";
 
-export const Footer: React.FC = () => {
-  const { navigate, categories, brandInfo, addToast } = useStore();
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+import { useState, type FormEvent } from "react";
+import Link from "next/link";
+import { ArrowUpRight, Check, Leaf, MapPin, Send } from "lucide-react";
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+const shopLinks = [
+  { href: "/shop", label: "All products" },
+  { href: "/shop?c=Serum", label: "Serums" },
+  { href: "/shop?c=Cleanser", label: "Cleansers" },
+  { href: "/shop?c=Moisturiser", label: "Moisturisers" },
+  { href: "/shop?c=Protect", label: "SPF" },
+];
+
+const houseLinks = [
+  { href: "/about", label: "Our story" },
+  { href: "/#ritual", label: "The ritual" },
+  { href: "/#reviews", label: "Reviews" },
+  { href: "/account", label: "Your account" },
+];
+
+export function Footer() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+
+  function subscribe(e: FormEvent) {
     e.preventDefault();
-    if (!newsletterEmail.trim() || !newsletterEmail.includes('@')) {
-      addToast('Please provide a valid email address.', 'error');
-      return;
-    }
-    setNewsletterSubscribed(true);
-    addToast('Thank you for subscribing to Swif Atelier gazette.', 'success');
-    setNewsletterEmail('');
-  };
+    if (!email.includes("@")) return;
+    setDone(true);
+    setEmail("");
+  }
 
   return (
-    <footer className="bg-[#FAF7F2] text-[#1C2620] border-t border-[#BAC7BE]/35 pt-16 pb-12 mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Top Newsletter & Atelier Vision Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-[#BAC7BE]/30">
-          <div className="lg:col-span-6 space-y-4">
-            <span className="font-serif text-2xl tracking-[0.2em] font-medium block">
-              SWIF
-            </span>
-            <p className="text-sm text-[#5C7764] leading-relaxed max-w-md">
-              A contemporary house of slow botanical distillations and artisanal living objects. 
-              Grounded in organic highland botanicals, pure linen, and wheel-thrown stoneware.
+    <footer className="relative overflow-hidden bg-pine text-paper">
+      <div className="mx-auto w-[min(1120px,calc(100%-2.5rem))] py-16 sm:py-20">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr_0.7fr_1.3fr]">
+          <div>
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-paper text-pine">
+                <Leaf className="h-4 w-4" />
+              </span>
+              <span className="font-display text-lg font-semibold tracking-tight">
+                Verde
+                <span className="ml-1 text-xs font-normal uppercase tracking-[0.28em] text-moss">
+                  skin
+                </span>
+              </span>
+            </Link>
+            <p className="mt-5 max-w-[30ch] text-sm leading-relaxed text-paper/60">
+              Small-batch skincare pressed from the apricot orchards of the
+              Quetta valley. Nothing loud, nothing wasted.
             </p>
-            <div className="pt-2 flex items-center space-x-2 text-xs text-[#7A9382]">
-              <Lock className="w-3.5 h-3.5 text-[#5C7764]" />
-              <span>Transparent Luxury • Authoritative Inventory • Worldwide Express Delivery</span>
+            <p className="mt-6 flex items-center gap-2 text-xs text-paper/45">
+              <MapPin className="h-3.5 w-3.5" />
+              Hanna Valley Road, Quetta, Balochistan
+            </p>
+            <div className="mt-5 flex gap-6">
+              <a
+                href="#"
+                className="link-line flex items-center gap-1 text-[13px] text-paper/70 transition hover:text-paper"
+              >
+                Instagram
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+              <a
+                href="#"
+                className="link-line flex items-center gap-1 text-[13px] text-paper/70 transition hover:text-paper"
+              >
+                TikTok
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
             </div>
           </div>
 
-          <div className="lg:col-span-6">
-            <div className="bg-[#FDFCF7] p-6 sm:p-8 rounded-xs border border-[#D8BD7E]/30 shadow-xs">
-              <h3 className="font-serif text-lg tracking-wide text-[#1C2620] mb-2">
-                The Atelier Gazette
-              </h3>
-              <p className="text-xs text-[#5C7764] mb-4">
-                Receive private notices on limited botanical harvests, small-batch ceramic firings, and seasonal scents.
-              </p>
-
-              {newsletterSubscribed ? (
-                <div className="flex items-center space-x-2 text-xs text-[#5C7764] bg-[#E8EFE9] p-3 rounded-xs border border-[#BAC7BE]/40">
-                  <CheckCircle2 className="w-4 h-4 text-[#5C7764] flex-shrink-0" />
-                  <span>You are subscribed. We honor your privacy with thoughtful quarterly correspondence.</span>
-                </div>
-              ) : (
-                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="email"
-                    value={newsletterEmail}
-                    onChange={(e) => setNewsletterEmail(e.target.value)}
-                    placeholder="Enter your email address..."
-                    required
-                    className="flex-1 bg-white border border-[#BAC7BE]/50 rounded-xs px-3.5 py-2.5 text-xs text-[#1C2620] placeholder-[#9AAEA0] focus:outline-none focus:border-[#5C7764] transition-colors"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-[#1C2620] text-[#FAF7F2] hover:bg-[#334338] px-5 py-2.5 text-xs tracking-wider uppercase font-medium rounded-xs transition-colors"
-                  >
-                    Subscribe
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Multi-column Directory & Official Channels */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 py-16 border-b border-[#BAC7BE]/30">
-          
-          {/* Column 1: Curated Collections */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5C7764]">
-              Collections
-            </h4>
-            <ul className="space-y-2.5 text-xs text-[#334338]">
-              {categories.map((c) => (
-                <li key={c.id}>
-                  <button 
-                    onClick={() => navigate('category', { categorySlug: c.slug })}
-                    className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                  >
-                    {c.name}
-                  </button>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-moss">
+              Shop
+            </p>
+            <ul className="mt-5 space-y-3">
+              {shopLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="link-line text-sm text-paper/65 transition hover:text-paper">
+                    {l.label}
+                  </Link>
                 </li>
               ))}
-              <li>
-                <button 
-                  onClick={() => navigate('new-arrivals')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  New Seasonal Arrivals
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('best-sellers')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Heirloom Best Sellers
-                </button>
-              </li>
             </ul>
           </div>
 
-          {/* Column 2: Customer Assistance */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5C7764]">
-              Customer Service
-            </h4>
-            <ul className="space-y-2.5 text-xs text-[#334338]">
-              <li>
-                <button 
-                  onClick={() => navigate('contact')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Contact Atelier
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('shipping')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Shipping & Delivery
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('returns')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Returns & Exchanges
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('faq')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Frequently Asked Questions
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('my-orders')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Track Order Status
-                </button>
-              </li>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-moss">
+              The house
+            </p>
+            <ul className="mt-5 space-y-3">
+              {houseLinks.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="link-line text-sm text-paper/65 transition hover:text-paper">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 3: The Maison */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5C7764]">
-              The Maison
-            </h4>
-            <ul className="space-y-2.5 text-xs text-[#334338]">
-              <li>
-                <button 
-                  onClick={() => navigate('about')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Our Philosophy
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('privacy')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Privacy Policy
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('terms')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors"
-                >
-                  Terms & Conditions
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => navigate('admin-login')}
-                  className="hover:text-[#1C2620] hover:underline underline-offset-4 transition-colors text-[#7A9382]"
-                >
-                  Staff & Admin Portal
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4 & 5: Official Contact & Social Networks */}
-          <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5C7764] mb-3">
-                Official Contact & Support
-              </h4>
-              <p className="text-xs text-[#5C7764] mb-3">
-                Have a question? Reach us by email or message us on Instagram.
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-moss">
+              Letters from the valley
+            </p>
+            <p className="mt-5 text-sm leading-relaxed text-paper/60">
+              One email a month — harvest notes, restocks, and the occasional
+              recipe. Never noise.
+            </p>
+            {done ? (
+              <p className="mt-5 flex items-center gap-2 rounded-2xl border border-moss/30 bg-forest/60 px-4 py-3.5 text-sm text-moss">
+                <Check className="h-4 w-4" />
+                You&apos;re on the list. Khush amdeed.
               </p>
-              
-              <div className="space-y-2">
-                {/* Official Email */}
-                <div className="flex items-center space-x-2 text-xs">
-                  <Mail className="w-4 h-4 text-[#5C7764]" />
-                  <span className="text-[#7A9382]">Email:</span>
-                  <a 
-                    href={`mailto:${brandInfo.email}`}
-                    className="font-medium text-[#1C2620] hover:text-[#5C7764] hover:underline transition-colors"
-                  >
-                    {brandInfo.email}
-                  </a>
-                </div>
-
-                {/* Official Instagram */}
-                <div className="flex items-center space-x-2 text-xs">
-                  <Instagram className="w-4 h-4 text-[#B7903D]" />
-                  <span className="text-[#7A9382]">Instagram:</span>
-                  <a 
-                    href={brandInfo.instagram.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-[#1C2620] hover:text-[#5C7764] inline-flex items-center space-x-1 hover:underline transition-colors"
-                  >
-                    <span>{brandInfo.instagram.handle}</span>
-                    <ArrowUpRight className="w-3 h-3 text-[#B7903D]" />
-                  </a>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#E8EFE9] text-[#5C7764] font-medium border border-[#BAC7BE]/50">
-                    Official
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Social Media Channels (Active vs Coming Soon) */}
-            <div>
-              <h5 className="text-[11px] font-semibold uppercase tracking-wider text-[#7A9382] mb-2.5">
-                Social Networks Availability
-              </h5>
-              
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {/* Instagram (Available) */}
-                <a 
-                  href={brandInfo.instagram.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FDFCF7] border border-[#D8BD7E]/50 text-[#1C2620] hover:bg-[#FAF7F2] transition-colors group"
+            ) : (
+              <form onSubmit={subscribe} className="mt-5 flex overflow-hidden rounded-full border border-paper/20 focus-within:border-moss/60">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full bg-transparent px-5 py-3.5 text-sm text-paper placeholder:text-paper/35"
+                />
+                <button
+                  type="submit"
+                  aria-label="Subscribe"
+                  className="grid w-14 shrink-0 place-items-center bg-moss text-pine transition hover:bg-paper"
                 >
-                  <div className="flex items-center space-x-2">
-                    <Instagram className="w-3.5 h-3.5 text-[#B7903D]" />
-                    <span className="font-medium">Instagram</span>
-                  </div>
-                  <span className="text-[10px] text-[#5C7764] font-medium flex items-center">
-                    @swif.site <ArrowUpRight className="w-2.5 h-2.5 ml-0.5" />
-                  </span>
-                </a>
-
-                {/* Facebook (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Facebook className="w-3.5 h-3.5" />
-                    <span>Facebook</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-
-                {/* TikTok (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-[11px] leading-none">TT</span>
-                    <span>TikTok</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-
-                {/* YouTube (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Youtube className="w-3.5 h-3.5" />
-                    <span>YouTube</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-
-                {/* X / Twitter (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Twitter className="w-3.5 h-3.5" />
-                    <span>X</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-
-                {/* Pinterest (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-[11px] leading-none">P</span>
-                    <span>Pinterest</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-
-                {/* LinkedIn (Coming Soon) */}
-                <div 
-                  className="flex items-center justify-between p-2 rounded-xs bg-[#FAF7F2]/50 border border-[#BAC7BE]/30 text-[#9AAEA0] cursor-not-allowed opacity-75 col-span-2"
-                  title="Official account not yet launched"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Linkedin className="w-3.5 h-3.5" />
-                    <span>LinkedIn</span>
-                  </div>
-                  <span className="text-[10px] bg-[#E8EFE9] text-[#7A9382] px-1.5 py-0.5 rounded">
-                    Coming Soon
-                  </span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Bottom Copyright & Disclosure */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#7A9382] space-y-4 sm:space-y-0">
-          <p>© {new Date().getFullYear()} Swif Atelier. All rights reserved.</p>
-          <div className="flex items-center space-x-6 text-[11px]">
-            <button onClick={() => navigate('privacy')} className="hover:text-[#1C2620]">
-              Privacy Policy
-            </button>
-            <span>•</span>
-            <button onClick={() => navigate('terms')} className="hover:text-[#1C2620]">
-              Terms of Service
-            </button>
-            <span>•</span>
-            <button onClick={() => navigate('shipping')} className="hover:text-[#1C2620]">
-              Global Shipping
-            </button>
+                  <Send className="h-4 w-4" />
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
+        <p
+          className="text-outline-light mt-16 select-none text-center font-display text-[clamp(3.5rem,13vw,11rem)] font-semibold leading-none tracking-tight"
+          aria-hidden
+        >
+          VERDE SKIN
+        </p>
+
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-paper/10 pt-6 text-[11px] text-paper/40 sm:flex-row">
+          <p>© 2026 Verde Skin Co. — made patiently in Quetta, Pakistan</p>
+          <p>Cash on delivery nationwide · Free shipping over Rs 5,000</p>
+        </div>
       </div>
     </footer>
   );
-};
+}
